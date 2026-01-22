@@ -1,5 +1,5 @@
 # OOP
-import csv
+from product_reader import load_products
 
 
 class Product:
@@ -15,22 +15,25 @@ class Product:
 
 # Product_Manager: responsible for loading product data from CSV , displaying products, searching and filtering
 class Product_Manager:
-    def __init__(self, csv_file):
-        self.products = []
-        self.load_products(csv_file)
-
-    def load_products(self, csv_file):
+    def __init__(self, ):
+        raw_product = load_products()
+        self.products = [Product(**prod) for prod in raw_product]
+        
+    #def load_products(self, csv_file = 'products.csv'):
         # Implementation for loading products from CSV
-        with open(csv_file, 'r') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                product = Product(
-                    name=row['name'],
-                    price=float(row['price']),
-                    category=row['category'],
-                    stock=int(row['stock'])
-                )
-                self.products.append(product)
+  #      with open(csv_file, 'r') as file:
+    #        reader = csv.DictReader(file)
+     #       for row in reader:
+      #          product = Product(
+       #             name=row['name'],
+        #            price=float(row['price']),
+         #           category=row['category'],
+          #          stock=int(row['stock'])
+            #    )
+           #     self.products.append(product)
+    
+    def find_by_category(self, category):
+        return [p for p in self.products if p.category == category]
 
     def display_products(self):
         for product in self.products:
@@ -83,3 +86,23 @@ def filter_by_category(product_manager, category):
 
 def search_with_conditions(product_manager, condition_func):
     return [p for p in product_manager.products if condition_func(p)]
+
+class User():
+    def __init__(self, name, preferred_category, SortingAlgorithm=False):
+        self.name = name
+        self.preferred_category = preferred_category
+        self.SortingAlgorithm = SortingAlgorithm
+    
+    def choose_product(self, product_manager):
+        return product_manager.find_by_category(self.preferred_category)
+    
+
+def main():
+    item = Product_Manager()
+    user = User("Alice", "Electronics")
+    recommended_products = user.choose_product(item)
+    print("Recommended Products for", user.name)
+    for product in recommended_products:
+        print(product.display_info())   
+if __name__ == "__main__":
+    main()
