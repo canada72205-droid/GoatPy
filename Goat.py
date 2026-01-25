@@ -19,18 +19,6 @@ class Product_Manager:
         raw_product = load_products()
         self.products = [Product(**prod) for prod in raw_product]
         
-    #def load_products(self, csv_file = 'products.csv'):
-        # Implementation for loading products from CSV
-  #      with open(csv_file, 'r') as file:
-    #        reader = csv.DictReader(file)
-     #       for row in reader:
-      #          product = Product(
-       #             name=row['name'],
-        #            price=float(row['price']),
-         #           category=row['category'],
-          #          stock=int(row['stock'])
-            #    )
-           #     self.products.append(product)
     
     def find_by_category(self, category):
         return [p for p in self.products if p.category == category]
@@ -38,6 +26,36 @@ class Product_Manager:
     def display_products(self):
         for product in self.products:
             print(product.display_info())
+    
+    def add_product(product_manager, name, price, category, stock):
+        new_product = Product(name, price, category, stock)
+        product_manager.products.append(new_product)
+
+    # Delete Product
+
+
+    def delete_product(product_manager, product_name):
+        product_manager.products = [
+            p for p in product_manager.products if p.name != product_name]
+
+    # Search Product by name
+
+
+    def search_product(product_manager, search_term):
+        return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
+
+    # Search Product by category
+
+
+    def filter_by_category(product_manager, category):
+        return [p for p in product_manager.products if p.category.lower() == category.lower()]
+
+    # Search Product based on logical conditions
+
+
+    def search_with_conditions(product_manager, condition_func):
+        return [p for p in product_manager.products if condition_func(p)]
+
 
 # SortingAlgorithm: responsible for sorting products based on different criteria
 
@@ -55,37 +73,6 @@ class SortingAlgorithm:
     def sort_by_stock(products, ascending=True):
         return sorted(products, key=lambda x: x.stock, reverse=not ascending)
 
-# Add Product
-
-
-def add_product(product_manager, name, price, category, stock):
-    new_product = Product(name, price, category, stock)
-    product_manager.products.append(new_product)
-
-# Delete Product
-
-
-def delete_product(product_manager, product_name):
-    product_manager.products = [
-        p for p in product_manager.products if p.name != product_name]
-
-# Search Product by name
-
-
-def search_product(product_manager, search_term):
-    return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
-
-# Search Product by category
-
-
-def filter_by_category(product_manager, category):
-    return [p for p in product_manager.products if p.category.lower() == category.lower()]
-
-# Search Product based on logical conditions
-
-
-def search_with_conditions(product_manager, condition_func):
-    return [p for p in product_manager.products if condition_func(p)]
 
 class User():
     def __init__(self, name, preferred_category, SortingAlgorithm=False):
