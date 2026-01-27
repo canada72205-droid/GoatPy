@@ -93,15 +93,32 @@ class Product_Manager:
             print("Product not found")
 
 
-    def delete_product(self, product_manager, product_name):
-        product_manager.products = [
-            p for p in product_manager.products if p.name != product_name]
+    def delete_product(self,target_name):
+        products_to_keep = []
+        found = False
 
-    # Search Product by name
+        with open('products.csv', mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            fieldnames = reader.fieldnames 
+            
+            for row in reader:
+                if row['name'].strip().lower() != target_name.strip().lower():
+                    products_to_keep.append(row)
+                else:
+                    found = True
+                    
+        if found:
+            with open('products.csv', mode='w', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(products_to_keep)
+            print(f"Successfully deleted '{target_name}'.")
+        else:
+            print(f"Product '{target_name}' not found.")
+
+        return found
 
 
-
-# SortingAlgorithm: responsible for sorting products based on different criteria
 
 
 class SortingAlgorithm(ABC):
