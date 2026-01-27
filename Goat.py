@@ -1,7 +1,7 @@
 # OOP
 from product_reader import load_products
 import csv
-
+from abc import ABC, abstractmethod
 
 
 class Product:
@@ -115,18 +115,36 @@ class Product_Manager:
 # SortingAlgorithm: responsible for sorting products based on different criteria
 
 
-class SortingAlgorithm:
-    @staticmethod
-    def sort_by_price(products, ascending=True):
-        return sorted(products, key=lambda x: x.price, reverse=not ascending)
-
-    @staticmethod
-    def sort_by_name(products):
-        return sorted(products, key=lambda x: x.name)
-
-    @staticmethod
-    def sort_by_stock(products, ascending=True):
-        return sorted(products, key=lambda x: x.stock, reverse=not ascending)
+class SortingAlgorithm(ABC):
+    @abstractmethod
+    def sort(self, products, key="price"):
+        pass
+    
+class BubbleSort(SortingAlgorithm):
+    def sort(self, products, key='price'):       
+        arr = products.copy()        
+        n = len(arr)
+        for i in range(n):
+            for j in range(0, n-i-1):
+                a = getattr(arr[j], key)                
+                b = getattr(arr[j+1], key)
+                if a > b:
+                    arr[j], arr[j+1] = arr[j+1], arr[j]
+        return arr
+    
+class SelectionSort(SortingAlgorithm):
+    def sort(self, products, key='price'):        
+        arr = products.copy()        
+        n = len(arr)
+        for i in range(n):            
+            min_idx = i
+            for j in range(i+1, n):                
+                a = getattr(arr[j], key)                
+                b = getattr(arr[min_idx], key)
+                if a < b:                    
+                    min_idx = j
+                    arr[i], arr[min_idx] = arr[min_idx], arr[i]
+        return arr
 
 
 class User():
