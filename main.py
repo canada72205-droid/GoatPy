@@ -1,4 +1,4 @@
-from Goat import User, Product_Manager, Product
+from Goat import User, Product_Manager, Product, SortingAlgorithm, BubbleSort, SelectionSort
 import os
 
 from product_reader import load_products
@@ -81,18 +81,24 @@ def buyer_menu(current_user):
         elif choice == "3":
             pref = current_user.preferred_category
             found = False
+            recommended_list= []
             for product_dict in products:
-                if pref == product_dict['category']:
+                if pref.lower() == product_dict['category'].lower():
                     product = Product(
                             product_dict['name'],
                             product_dict['price'],
                             product_dict['category'],
                             product_dict['stock']
                         )
-                    print(product.display_info())
+                    recommended_list.append(product)
                     found = True
             if not found:
                 print(f"no produts were found under {pref}")
+            if recommended_list:
+                sorter = SelectionSort()
+                sorted_list = sorter.sort(recommended_list, key="price")
+                for product in sorted_list:
+                    print(product.display_info())
             input("\nPress Enter to continue...")
         elif choice == "4":
             current_user.view_cart()

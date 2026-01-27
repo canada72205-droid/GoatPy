@@ -89,7 +89,7 @@ class Product_Manager:
             print("Product not found")
 
 
-    def delete_product(product_manager, product_name):
+    def delete_product(self, product_manager, product_name):
         product_manager.products = [
             p for p in product_manager.products if p.name != product_name]
 
@@ -98,12 +98,6 @@ class Product_Manager:
 
     def search_product(product_manager, search_term):
         return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
-
-    # Search Product by category
-
-
-    def filter_by_category(product_manager, category):
-        return [p for p in product_manager.products if p.category.lower() == category.lower()]
 
     # Search Product based on logical conditions
 
@@ -119,7 +113,7 @@ class SortingAlgorithm(ABC):
     @abstractmethod
     def sort(self, products, key="price"):
         pass
-    
+
 class BubbleSort(SortingAlgorithm):
     def sort(self, products, key='price'):       
         arr = products.copy()        
