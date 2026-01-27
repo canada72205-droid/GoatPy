@@ -194,7 +194,10 @@ def manager_menu():
             input("\nPress Enter to continue...")
         elif choice == "3":
             manager = Product_Manager()
-            manager.delete_product()
+            name_to_remove = input("Enter the exact name of the product to delete: ")
+            success = manager.delete_product(name_to_remove)
+            if success:
+                products = load_products()
             input("\nPress Enter to continue...")
         elif choice == "0":
             break
