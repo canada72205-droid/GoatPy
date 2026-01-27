@@ -3,6 +3,7 @@ from product_reader import load_products
 import csv
 
 
+
 class Product:
     def __init__(self, name, price, category, stock):
         self.name = name
@@ -28,12 +29,16 @@ class Product_Manager:
         for product in self.products:
             print(product.display_info())
     
-    def add_product(product_dict, filename="products.csv"):
+    def add_product(self, product_dict, filename="products.csv"):
         import os
-    
-   
         file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
         
+        if file_exists:
+            with open(filename, 'rb+') as f:
+                f.seek(-1, os.SEEK_END)
+                if f.read(1) != b'\n':
+                    f.write(b'\n')
+
         with open(filename, "a", newline="") as file:
             fieldnames = ["name", "price", "category", "stock"]
             writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -45,7 +50,7 @@ class Product_Manager:
             writer.writerow(product_dict)
         print(f"Added {product_dict['name']} to Store")
     
-    def edit_product(products, filename="products.csv"):
+    def edit_product(self, products, filename="products.csv"):
    
         product_name = input("Enter the product name to edit: ")
     
@@ -125,18 +130,16 @@ class SortingAlgorithm:
 
 
 class User():
-    def __init__(self, name, preferred_category):
+    def __init__(self, name, preferred_category, cart):
         self.name = name
         self.preferred_category = preferred_category
+        self.cart = {}
         
     def choose_product(self, product_manager, preferred_category):
         return product_manager.find_by_category(self.preferred_category)
         
     def add_to_cart(self, product_name, price):
-        self.cart.append({
-            'name': product_name,
-            'price': price
-        })
+        self.cart[product_name] = price
     def view_cart(self):
         if not self.cart:
             print("Your cart is empty")
@@ -144,9 +147,9 @@ class User():
         
         print("\n--- Your Cart ---")
         total = 0
-        for item in self.cart:
-            print(f"{item['name']}: ${item['price']:.2f}")
-            total += item['price']
+        for name, price in self.cart.items():
+            print(f"{name}: ${price:.2f}")
+        total += price
         print(f"Total: ${total:.2f}")
 
     def remove_from_cart(self, product_name):

@@ -1,8 +1,8 @@
 from Goat import User, Product_Manager, Product
 import os
 
-from product_reader import products
-
+from product_reader import load_products
+products = load_products()
 def clear_screen():
     
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -25,7 +25,7 @@ def print_menu():
         if answer == "1":
             name = input("What is your name?: ")
             preferred_category = input("What is your preferred Category?: ")
-            current_user = User(name, preferred_category)
+            current_user = User(name, preferred_category, cart = None)
             buyer_menu(current_user)
         elif answer == "2":
             manager_menu()
@@ -60,6 +60,7 @@ def buyer_menu(current_user):
                    product_dict["stock"]
                ) 
                print(product.display_info())
+            input("\nPress Enter to continue...")
         elif choice == "2":
             search_term = input("what would you like to search for?: ")
             found = False
@@ -76,7 +77,7 @@ def buyer_menu(current_user):
                     break
             if not found:
                     print("this item was not found")
-
+            input("\nPress Enter to continue...")
         elif choice == "3":
             pref = current_user.preferred_category
             found = False
@@ -92,13 +93,15 @@ def buyer_menu(current_user):
                     found = True
             if not found:
                 print(f"no produts were found under {pref}")
+            input("\nPress Enter to continue...")
         elif choice == "4":
             current_user.view_cart()
+            input("\nPress Enter to continue...")
         elif choice == "5":
             item = input("What would you like to purchase?: ")
             found = False
             for product_dict in products:
-                if item ==  product_dict['name']:
+                if item.lower() ==  product_dict['name'].lower():
                     current_user.add_to_cart(
                         product_dict['name'],
                         product_dict['price']
@@ -108,9 +111,11 @@ def buyer_menu(current_user):
                     break
             if not found:
                 print("Product not found")
+            input("\nPress Enter to continue...")
         elif choice == "6":
             item = input("which item would you like to discard?: ") 
             current_user.remove_from_cart(item)   
+            input("\nPress Enter to continue...")
         elif choice == "0":
             break
         else:
@@ -124,8 +129,6 @@ def manager_menu():
         print("1. Add product")
         print("2. Update product")
         print("3. Delete product")
-        print("4. View all products")
-        print("5. View analytics")
         print("0. Back to main menu")
         print()
         
@@ -154,12 +157,13 @@ def manager_menu():
         elif choice == "3":
             manager = Product_Manager()
             manager.delete_product()
-        elif choice == "4":
-            view_all_products()
-        elif choice == "5":
-            view_analytics()
+            input("\nPress Enter to continue...")
         elif choice == "0":
             break
         else:
             print("\nInvalid choice.")
             input("Press Enter to continue...")
+
+
+if __name__ == "__main__":
+    print_menu()  # Startet das Programm

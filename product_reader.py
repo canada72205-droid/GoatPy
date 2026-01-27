@@ -15,3 +15,4 @@ def load_products(csv_file = 'products.csv'):
                     }
                 )             
         return products
+products = load_products()
