@@ -1,6 +1,6 @@
 # OOP
-import csv
 from product_reader import load_products
+import csv
 
 
 class Product:
@@ -16,57 +16,95 @@ class Product:
 
 # Product_Manager: responsible for loading product data from CSV , displaying products, searching and filtering
 class Product_Manager:
-    def __init__(self, file):
-        self.file = file
-        self.inventory = load_products(file)
-        self.products = [Product(**prod) for prod in self.inventory]
+    def __init__(self, ):
+        raw_product = load_products()
+        self.products = [Product(**prod) for prod in raw_product]
+        
+    
+    def find_by_category(self, category):
+        return [p for p in self.products if p.category == category]
 
     def display_products(self):
-        if not self.products:
-            print("No products available.")
-            return
         for product in self.products:
             print(product.display_info())
-
-    def save_products(self):
-        with open(self.file, 'w') as file:
-            fieldnames = ['name', 'price', 'category', 'stock']
+    
+    def add_product(product_dict, filename="products.csv"):
+        import os
+    
+   
+        file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
+        
+        with open(filename, "a", newline="") as file:
+            fieldnames = ["name", "price", "category", "stock"]
             writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
-            for product in self.products:
-                writer.writerow({
-                    'name': product.name,
-                    'price': product.price,
-                    'category': product.category,
-                    'stock': product.stock
-                })
+            
+           
+            if not file_exists:
+                writer.writeheader()
+            
+            writer.writerow(product_dict)
+        print(f"Added {product_dict['name']} to Store")
+    
+    def edit_product(products, filename="products.csv"):
+   
+        product_name = input("Enter the product name to edit: ")
+    
+        found = False
+        for product in products:
+            if product['name'].lower() == product_name.lower():
+                found = True
+                
+                print(f"\nEditing: {product['name']}")
+                print("(Press Enter to keep current value)")
+                
+                new_name = input(f"New name [{product['name']}]: ")
+                new_price = input(f"New price [${product['price']}]: ")
+                new_category = input(f"New category [{product['category']}]: ")
+                new_stock = input(f"New stock [{product['stock']}]: ")
+                
+                if new_name:
+                    product['name'] = new_name
+                if new_price:
+                    product['price'] = float(new_price)
+                if new_category:
+                    product['category'] = new_category
+                if new_stock:
+                    product['stock'] = int(new_stock)
+                
+                with open(filename, 'w', newline='') as file:
+                    fieldnames = ['name', 'price', 'category', 'stock']
+                    writer = csv.DictWriter(file, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(products)
+                
+                print("\nProduct updated successfully!")
+                break
+        
+        if not found:
+            print("Product not found")
 
-    def add_product(self, name, price, category, stock):
-        new_product = Product(name, price, category, stock)
-        self.products.append(new_product)
-        self.save_products()
 
-    # Delete Product
-
-    def delete_product(self, product_name):
-        self.products = [
-            p for p in self.products if p.name != product_name]
-        self.save_products()
+    def delete_product(product_manager, product_name):
+        product_manager.products = [
+            p for p in product_manager.products if p.name != product_name]
 
     # Search Product by name
 
-    def search_product(self, search_term):
-        return [p for p in self.products if search_term.lower() in p.name.lower()]
+
+    def search_product(product_manager, search_term):
+        return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
 
     # Search Product by category
 
-    def filter_by_category(self, category):
-        return [p for p in self.products if p.category.lower() == category.lower()]
+
+    def filter_by_category(product_manager, category):
+        return [p for p in product_manager.products if p.category.lower() == category.lower()]
 
     # Search Product based on logical conditions
 
-    def search_with_conditions(self, condition_func):
-        return [p for p in self.products if condition_func(p)]
+
+    def search_with_conditions(product_manager, condition_func):
+        return [p for p in product_manager.products if condition_func(p)]
 
 
 # SortingAlgorithm: responsible for sorting products based on different criteria
@@ -87,23 +125,34 @@ class SortingAlgorithm:
 
 
 class User():
-    def __init__(self, name, preferred_category, SortingAlgorithm=False):
+    def __init__(self, name, preferred_category):
         self.name = name
         self.preferred_category = preferred_category
-        self.SortingAlgorithm = SortingAlgorithm
+        
+    def choose_product(self, product_manager, preferred_category):
+        return product_manager.find_by_category(self.preferred_category)
+        
+    def add_to_cart(self, product_name, price):
+        self.cart.append({
+            'name': product_name,
+            'price': price
+        })
+    def view_cart(self):
+        if not self.cart:
+            print("Your cart is empty")
+            return
+        
+        print("\n--- Your Cart ---")
+        total = 0
+        for item in self.cart:
+            print(f"{item['name']}: ${item['price']:.2f}")
+            total += item['price']
+        print(f"Total: ${total:.2f}")
 
-    def choose_product(self, product_manager):
-        return product_manager.filter_by_category(self.preferred_category)
-
-
-def main():
-    item = Product_Manager("products.csv")
-    user = User("Alice", "Electronics")
-    recommended_products = user.choose_product(item)
-    print("Recommended Products for", user.name)
-    for product in recommended_products:
-        print(product.display_info())
-
-
-if __name__ == "__main__":
-    main()
+    def remove_from_cart(self, product_name):
+        if product_name in self.cart:
+            del self.cart[product_name]
+            print(f"{product_name} removed from cart")
+        else:
+            print("Item not in cart")
+    
