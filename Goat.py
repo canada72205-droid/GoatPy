@@ -93,29 +93,26 @@ class Product_Manager:
             print("Product not found")
 
 
-    def delete_product(self,target_name):
-        products_to_keep = []
+    def delete_product(self, target_name):
+        rows = []
         found = False
-
-        with open('products.csv', mode='r', newline='') as file:
-            reader = csv.DictReader(file)
-            fieldnames = reader.fieldnames 
-            
+        target = target_name.strip().lower()
+        with open('products.csv', 'r', newline='') as f:
+            reader = csv.DictReader(f)
+            fieldnames = reader.fieldnames
             for row in reader:
-                if row['name'].strip().lower() != target_name.strip().lower():
-                    products_to_keep.append(row)
+                
+                if row['name'].strip().lower() != target:
+                    rows.append(row)
                 else:
                     found = True
-                    
-        if found:
-            with open('products.csv', mode='w', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(products_to_keep)
-            print(f"Successfully deleted '{target_name}'.")
-        else:
-            print(f"Product '{target_name}' not found.")
 
+        if found:
+            with open('products.csv', 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+                
         return found
 
 

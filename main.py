@@ -2,12 +2,14 @@ from Goat import User, Product_Manager, Product, SortingAlgorithm, BubbleSort, S
 import os
 from binary_search import binary_search
 from product_reader import load_products
+from rule_based_rec import recommendation
 products = load_products()
 def clear_screen():
     
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_menu():
+    products = load_products()
     while True:
         clear_screen()
         print("=" * 60)
@@ -28,7 +30,7 @@ def print_menu():
             current_user = User(name, preferred_category, cart = None)
             buyer_menu(current_user, products)
         elif answer == "2":
-            manager_menu()
+            manager_menu(products)
         elif answer == "3":
             print("\nThank you for using GOATPY!")
             break
@@ -47,6 +49,7 @@ def buyer_menu(current_user, products):
         print("5. Purchase Product")
         print("6. Remove from cart")
         print("7. Feature Items")
+        print("8. Budget Items")
         print("0. Back to main menu")
         print()
         
@@ -154,13 +157,21 @@ def buyer_menu(current_user, products):
             else:
                 print("\nNo featured products found at this time")
             input("\nPress Enter to continue...")
+        elif choice == "8":
+            recs =  recommendation()
+            if not recs:
+                print("No budget friendly items in stock right now")
+            else:
+                for prod in recs:
+                    print(f"{prod['name']}, {prod['price']}- Category {prod['category']}")
+            input("\nPress Enter to continue...")
         elif choice == "0":
             break
         else:
             print("\nInvalid choice.")
             input("Press Enter to continue...")
 
-def manager_menu():
+def manager_menu(products):
     while True:
         clear_screen()
         print("=== MANAGER MENU ===\n")
@@ -194,10 +205,15 @@ def manager_menu():
             input("\nPress Enter to continue...")
         elif choice == "3":
             manager = Product_Manager()
-            name_to_remove = input("Enter the exact name of the product to delete: ")
+            name_to_remove = input("Enter the exact name: ")
             success = manager.delete_product(name_to_remove)
+            
             if success:
-                products = load_products()
+                products[:] = load_products() 
+                print(f"Successfully deleted {name_to_remove} and refreshed list.")
+            else:
+                print("Product not found. (Check spelling and capitals!)")
+                
             input("\nPress Enter to continue...")
         elif choice == "0":
             break
