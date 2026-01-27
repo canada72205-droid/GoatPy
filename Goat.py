@@ -48,24 +48,25 @@ class Product_Manager:
 
     # Delete Product
 
-    def delete_product(product_manager, product_name):
-        product_manager.products = [
-            p for p in product_manager.products if p.name != product_name]
+    def delete_product(self, product_name):
+        self.products = [
+            p for p in self.products if p.name != product_name]
+        self.save_products()
 
     # Search Product by name
 
-    def search_product(product_manager, search_term):
-        return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
+    def search_product(self, search_term):
+        return [p for p in self.products if search_term.lower() in p.name.lower()]
 
     # Search Product by category
 
-    def filter_by_category(product_manager, category):
-        return [p for p in product_manager.products if p.category.lower() == category.lower()]
+    def filter_by_category(self, category):
+        return [p for p in self.products if p.category.lower() == category.lower()]
 
     # Search Product based on logical conditions
 
-    def search_with_conditions(product_manager, condition_func):
-        return [p for p in product_manager.products if condition_func(p)]
+    def search_with_conditions(self, condition_func):
+        return [p for p in self.products if condition_func(p)]
 
 
 # SortingAlgorithm: responsible for sorting products based on different criteria
