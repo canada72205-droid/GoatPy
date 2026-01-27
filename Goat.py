@@ -100,15 +100,6 @@ class Product_Manager:
     # Search Product by name
 
 
-    def search_product(product_manager, search_term):
-        return [p for p in product_manager.products if search_term.lower() in p.name.lower()]
-
-    # Search Product based on logical conditions
-
-
-    def search_with_conditions(product_manager, condition_func):
-        return [p for p in product_manager.products if condition_func(p)]
-
 
 # SortingAlgorithm: responsible for sorting products based on different criteria
 

@@ -1,6 +1,6 @@
 from Goat import User, Product_Manager, Product, SortingAlgorithm, BubbleSort, SelectionSort
 import os
-
+from binary_search import binary_search
 from product_reader import load_products
 products = load_products()
 def clear_screen():
@@ -72,20 +72,23 @@ def buyer_menu(current_user, products):
             input("\nPress Enter to continue...")
         elif choice == "2":
             search_term = input("what would you like to search for?: ")
-            found = False
+            all_products_objects = []
             for product_dict in products:
-                if product_dict["name"].lower() == search_term.lower():
-                    product = Product(
-                        product_dict['name'],
-                        product_dict['price'],
-                        product_dict['category'],
-                        product_dict['stock']
-                    )
-                    print(product.display_info())
-                    found = True
-                    break
-            if not found:
-                    print("this item was not found")
+                all_products_objects.append(Product(
+                    product_dict['name'],
+                    product_dict['price'],
+                    product_dict['category'],
+                    product_dict['stock']
+                ))
+            sorter = BubbleSort()
+            sorted_list = sorter.sort(all_products_objects, key="name")
+            
+            result = binary_search(sorted_list, search_term)
+            if result:
+                print("\nItem Found")
+                print(result.display_info())
+            else:
+                print("\nThis item was not found")
             input("\nPress Enter to continue...")
         elif choice == "3":
             pref = current_user.preferred_category
@@ -157,7 +160,7 @@ def buyer_menu(current_user, products):
             print("\nInvalid choice.")
             input("Press Enter to continue...")
 
-def manager_menu(products):
+def manager_menu():
     while True:
         clear_screen()
         print("=== MANAGER MENU ===\n")
