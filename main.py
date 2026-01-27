@@ -46,6 +46,7 @@ def buyer_menu(current_user, products):
         print("4. View cart")
         print("5. Purchase Product")
         print("6. Remove from cart")
+        print("7. Feature Items")
         print("0. Back to main menu")
         print()
         
@@ -129,6 +130,26 @@ def buyer_menu(current_user, products):
         elif choice == "6":
             item = input("which item would you like to discard?: ") 
             current_user.remove_from_cart(item)   
+            input("\nPress Enter to continue...")
+        elif choice == "7":
+            featured_products = []
+            for product_dict in products:
+                product = Product(
+                            product_dict['name'],
+                            product_dict['price'],
+                            product_dict['category'],
+                            product_dict['stock']
+                        )
+                if product.should_feature:
+                    featured_products.append(product)
+            if featured_products:
+                sorter = BubbleSort()
+                sorted_list = sorter.sort(featured_products, key="price")
+                print("\n--- Current Catalog ---")
+                for item in sorted_list:
+                    print(f"[FEATURED DEAL] {item.display_info()}")    
+            else:
+                print("\nNo featured products found at this time")
             input("\nPress Enter to continue...")
         elif choice == "0":
             break

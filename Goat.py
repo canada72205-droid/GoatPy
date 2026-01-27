@@ -10,7 +10,11 @@ class Product:
         self.price = price
         self.category = category
         self.stock = stock
-
+        # logical variables
+        self.is_out_of_stock = (self.stock <= 0)
+        self.is_high_demand = self.category.lower() in ["electronics", "fashion"]
+        self.is_budget_item = self.price < 10.0
+        self.should_feature = self.is_high_demand and not self.is_budget_item
     def display_info(self):
         return f"Product Name: {self.name}, Price: ${self.price:.2f}, Category: {self.category}, Stock: {self.stock}"
 
