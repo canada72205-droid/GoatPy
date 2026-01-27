@@ -26,7 +26,7 @@ def print_menu():
             name = input("What is your name?: ")
             preferred_category = input("What is your preferred Category?: ")
             current_user = User(name, preferred_category, cart = None)
-            buyer_menu(current_user)
+            buyer_menu(current_user, products)
         elif answer == "2":
             manager_menu()
         elif answer == "3":
@@ -36,7 +36,7 @@ def print_menu():
             print("\nInvalid choice. Please enter 1, 2, or 3.")
             input("Press Enter to continue...")
 
-def buyer_menu(current_user):
+def buyer_menu(current_user, products):
     while True:
         clear_screen()
         print("=== BUYER MENU ===\n")
@@ -52,14 +52,22 @@ def buyer_menu(current_user):
         choice = input("Enter choice: ")
         
         if choice == "1":
+            all_products = []
             for product_dict in products:
-               product = Product(
+                product = Product(
                    product_dict["name"],
                    product_dict["price"],
                    product_dict["category"],
                    product_dict["stock"]
                ) 
-               print(product.display_info())
+                all_products.append(product)
+            if all_products:
+                sorter = BubbleSort()
+                sorted_list = sorter.sort(all_products, key="price")
+                for product in sorted_list:
+                    print(product.display_info())
+            else:
+                print("\nThe store is currently empty")
             input("\nPress Enter to continue...")
         elif choice == "2":
             search_term = input("what would you like to search for?: ")
@@ -128,7 +136,7 @@ def buyer_menu(current_user):
             print("\nInvalid choice.")
             input("Press Enter to continue...")
 
-def manager_menu():
+def manager_menu(products):
     while True:
         clear_screen()
         print("=== MANAGER MENU ===\n")
@@ -172,4 +180,4 @@ def manager_menu():
 
 
 if __name__ == "__main__":
-    print_menu()  # Startet das Programm
+    print_menu() 
